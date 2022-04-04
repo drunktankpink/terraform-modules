@@ -1,10 +1,10 @@
-variable application {
-  description = "Descriptor for bucket"
+variable service_name {
+  description = "Name of the service the bucket belongs to"
   type        = string
 }
 
-variable service_name {
-  description = "Name of the service the bucket belongs to"
+variable description {
+  description = "Descriptor for resources"
   type        = string
 }
 
