@@ -36,7 +36,8 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "${var.vpc_name}-${local.subnet_abr[count.index]}-public-subnet"
+    Name        = "${var.vpc_name}-${local.subnet_abr[count.index]}-public-subnet"
+    SubnetTier  = "public"
   }
 }
 
@@ -50,7 +51,8 @@ resource "aws_subnet" "private" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "${var.vpc_name}-${local.subnet_abr[count.index]}-private-subnet"
+    Name        = "${var.vpc_name}-${local.subnet_abr[count.index]}-private-subnet"
+    SubnetTier  = "private"
   }
 }
 

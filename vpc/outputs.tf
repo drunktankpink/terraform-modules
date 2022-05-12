@@ -1,4 +1,4 @@
-output "aws_region" {
+output aws_region {
   description = "AWS region"
   value       = data.aws_region.current.name
 }
