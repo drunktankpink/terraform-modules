@@ -1,9 +1,16 @@
-provider "kubernetes" {
-  config_path = pathexpand(var.kube_config)
+resource "null_resource" "this" {
+  triggers = {
+    instance = join(",", var.dependencies)
+  }
 }
 
 resource "kubernetes_namespace" "this" {
+  count       = var.create_resources ? 1 : 0
+  depends_on  = [null_resource.this]
+
   metadata {
-    name = var.namespace
+    name        = var.name
+    labels      = var.labels
+    annotations = var.annotations
   }
 }
