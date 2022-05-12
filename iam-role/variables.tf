@@ -1,5 +1,5 @@
 variable service_name {
-  description = "Name of the service the bucket belongs to"
+  description = "Name of the service the resource belongs to"
   type        = string
 }
 
