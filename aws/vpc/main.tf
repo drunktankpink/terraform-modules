@@ -29,10 +29,10 @@ resource "aws_vpc" "this" {
   enable_dns_support    = var.enable_dns_support
 
   tags = merge{
-    Name = "${local.resource_prefix_region}-vpc"
-  },
-  var.tags,
-  var.vpc_tags
+    Name = "${local.resource_prefix_region}-vpc",
+    var.tags,
+    var.vpc_tags
+  }
 }
 
 ################################################################################
@@ -47,10 +47,10 @@ resource "aws_security_group" "this" {
   description = "Default security group for VPC"
 
   tags = merge{
-    Name = "${local.resource_prefix_region}-default-sg"
-  },
-  var.tags,
-  var.default_security_group_tags
+    Name = "${local.resource_prefix_region}-default-sg",
+    var.tags,
+    var.default_security_group_tags
+  }
 }
 
 resource "aws_security_group_rule" "default_ingress" {
