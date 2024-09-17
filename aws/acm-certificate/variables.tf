@@ -1,6 +1,5 @@
-
-variable service_name {
-  description = "Name of the service the resource belongs to"
+variable description {
+  description = "Descriptor for resources"
   type        = string
 }
 

@@ -16,6 +16,10 @@ data "aws_ami" "latest" {
   }
 }
 
+locals {
+  resource_name = "${var.environment}-${var.operating_system}-ec2"
+}
+
 # Provision EC2 instances based on the selected OS
 resource "aws_instance" "this" {
   ami           = data.aws_ami.latest.id
@@ -31,6 +35,6 @@ resource "aws_instance" "this" {
   user_data = var.operating_system == "windows" ? file("scripts/windows_bootstrap.ps1") : file("scripts/linux_bootstrap.sh")
 
   tags = merge({
-    Name = "${var.service_name}-${var.environment}-${var.operating_system}"
+    Name = local.resource_name
   }, var.tags)
 }

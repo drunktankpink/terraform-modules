@@ -5,7 +5,7 @@ resource "aws_acm_certificate" "this" {
   certificate_authority_arn = var.certificate_authority_arn
 
   tags = merge({
-    Name = "${var.service_name}-${var.environment}-certificate"
+    Name = local.resource_name
   }, var.tags)
 
   lifecycle {
