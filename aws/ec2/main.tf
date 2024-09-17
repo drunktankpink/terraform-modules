@@ -17,7 +17,7 @@ data "aws_ami" "latest" {
 }
 
 locals {
-  resource_name = "${var.environment}-${var.operating_system}-ec2"
+  resource_name = "${var.environment}-${var.service_name}-${var.operating_system}-ec2"
 }
 
 # Provision EC2 instances based on the selected OS
