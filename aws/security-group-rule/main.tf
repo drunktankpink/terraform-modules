@@ -1,4 +1,3 @@
-
 resource "aws_security_group_rule" "this" {
   type              = var.type
   from_port         = var.from_port
