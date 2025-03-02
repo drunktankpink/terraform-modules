@@ -8,18 +8,28 @@ variable description {
   type        = string
 }
 
-variable environment {
-  description = "Deployment environment (e.g., dev, prod)"
-  type        = string
-}
-
 variable vpc_id {
   description = "VPC ID for security group"
   type        = string
 }
 
-variable tags {
-  description = "Additional tags to apply to the security group"
+variable environment {
+  description = "Environment (e.g. dev, test, prod)"
+  type        = string
+}
+
+variable project_name {
+  description = "The project this IAM role is associated with"
+  type        = string
+}
+
+variable owner {
+  description = "Owner of the IAM role"
+  type        = string
+}
+
+variable additional_tags {
+  description = "Additional tags to apply to the IAM role"
   type        = map(string)
   default     = {}
 }
