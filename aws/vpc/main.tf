@@ -109,7 +109,7 @@ resource "aws_subnet" "public" {
   tags = merge(
     {
       Name        = "${var.vpc_name}-${local.subnet_abr[count.index]}-public-subnet"
-      SubnetTier = "public"
+      SubnetTier  = "public"
       Environment = var.environment
       Project     = var.project_name
       Owner       = var.owner

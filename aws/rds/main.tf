@@ -38,7 +38,13 @@ resource "aws_db_subnet_group" "this" {
   name       = "${local.resource_name}-db-subnet-group"
   subnet_ids = var.subnet_ids
 
-  tags = merge({
-    Name = "${local.resource_name}-db-subnet-group"
-  }, var.tags)
+  tags = merge(
+    {
+      Name        = "${local.resource_name}-db-subnet-group"
+      Environment = var.environment
+      Project     = var.project_name
+      Owner       = var.owner
+    },
+    var.additional_tags
+  )
 }

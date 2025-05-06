@@ -78,7 +78,13 @@ resource "aws_dynamodb_table" "this" {
     enabled = var.pitr_enabled
   }
 
-  tags = merge({
-    Name = local.resource_name
-  }, var.tags)
+  tags = merge(
+    {
+      Name        = local.resource_name
+      Environment = var.environment
+      Project     = var.project_name
+      Owner       = var.owner
+    },
+    var.additional_tags
+  )
 }

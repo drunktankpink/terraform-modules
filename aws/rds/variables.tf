@@ -5,9 +5,28 @@ variable "service_name" {
 }
 
 variable "environment" {
-  description = "Deployment environment (e.g., dev, prod)"
+  description = "Environment the resource belongs to (e.g., dev, test, prod)"
   type        = string
-  default     = ""
+  validation {
+    condition     = contains(["dev", "test", "prod"], var.environment)
+    error_message = "environment must be one of: dev, test, prod"
+  }
+}
+
+variable "project_name" {
+  description = "Name of the project"
+  type        = string
+}
+
+variable "owner" {
+  description = "Owner of the resource"
+  type        = string
+}
+
+variable "additional_tags" {
+  description = "A map of common tags to add to all resources"
+  type        = map(string)
+  default     = {}
 }
 
 variable "allocated_storage" {

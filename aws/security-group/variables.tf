@@ -14,22 +14,26 @@ variable "vpc_id" {
 }
 
 variable "environment" {
-  description = "Environment (e.g. dev, test, prod)"
+  description = "Environment the resource belongs to (e.g., dev, test, prod)"
   type        = string
+  validation {
+    condition     = contains(["dev", "test", "prod"], var.environment)
+    error_message = "environment must be one of: dev, test, prod"
+  }
 }
 
 variable "project_name" {
-  description = "The project this IAM role is associated with"
+  description = "Name of the project"
   type        = string
 }
 
 variable "owner" {
-  description = "Owner of the IAM role"
+  description = "Owner of the resource"
   type        = string
 }
 
 variable "additional_tags" {
-  description = "Additional tags to apply to the IAM role"
+  description = "A map of common tags to add to all resources"
   type        = map(string)
   default     = {}
 }

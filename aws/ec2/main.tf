@@ -34,7 +34,13 @@ resource "aws_instance" "this" {
   # Dynamic user data script for bootstrapping instances
   user_data = var.operating_system == "windows" ? file("scripts/windows_bootstrap.ps1") : file("scripts/linux_bootstrap.sh")
 
-  tags = merge({
-    Name = local.resource_name
-  }, var.tags)
+  tags = merge(
+    {
+      Name        = local.resource_name
+      Environment = var.environment
+      Project     = var.project_name
+      Owner       = var.owner
+    },
+    var.additional_tags
+  )
 }
