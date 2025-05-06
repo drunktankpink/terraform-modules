@@ -12,7 +12,7 @@ variable "gateway_vpc_endpoints" {
   default = {}
 }
 
-variable "interface_vpc_endpoint" {
+variable "interface_vpc_endpoints" {
   description = "A Map of Interface VPC endpoints to provision into the VPC. A map of objects with the following attribules: 'name', 'security_group_ids', 'private_dns_enabled' are required. 'policy' and 'subnet'ids' are optional and can be specified as 'null' or as an empty list."
   type = map(object({
     name = string

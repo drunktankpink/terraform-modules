@@ -1,7 +1,7 @@
 data "aws_vpc_endpoint_service" "gateway_endpoint_service" {
-    for_each = var.gateway_vpc_endoints
+    for_each = var.gateway_vpc_endpoints
 
-    service         = var.gateway_vpc_endoints[each.key].name
+    service         = var.gateway_vpc_endpoints[each.key].name
     service_type    = "Gateway"
 }
 
