@@ -12,10 +12,25 @@ data "aws_availability_zones" "available" {
 # Locals
 ################################################################################
 locals {
-  availability_zones = data.aws_availability_zones.available.names
-  location_abr       = replace(data.aws_region.current.name, "/^([a-z]{2})-(.)(.{0.})-([0-9])/", "$1$2$4")
-  subnet_abr         = [for az in data.aws_availability_zones.available.names : replace(az, "/^([a-z]{2})-(.)(.{0.})-([0-9])/", "$1$2$4")]
-  subnet_count       = length(data.aws_availability_zones.available.names)
+  availability_zones     = data.aws_availability_zones.available.names
+  subnet_count           = length(local.availability_zones)
+
+  # e.g., "eu-west-1" -> "euw1"
+  location_abr = join("", [
+    split("-", data.aws_region.current.name)[0],           # "eu"
+    substr(split("-", data.aws_region.current.name)[1], 0, 1), # "w"
+    split("-", data.aws_region.current.name)[2]            # "1"
+  ])
+
+  # e.g., "eu-west-1a" -> "euw1a"
+  subnet_abr = [
+    for az in local.availability_zones : join("", [
+      split("-", az)[0],
+      substr(split("-", az)[1], 0, 1),
+      split("-", az)[2]
+    ])
+  ]
+
   resource_prefix_region = "${var.vpc_name}-${local.location_abr}"
 }
 
@@ -30,9 +45,12 @@ resource "aws_vpc" "this" {
 
   tags = merge(
     {
-      Name = "${local.resource_prefix_region}-vpc"
+      Name        = "${local.resource_prefix_region}-vpc"
+      Environment = var.environment
+      Project     = var.project_name
+      Owner       = var.owner
     },
-    var.tags,
+    var.additional_tags,
     var.vpc_tags
   )
 }
@@ -40,19 +58,21 @@ resource "aws_vpc" "this" {
 ################################################################################
 # Security Groups
 ################################################################################
-resource "aws_security_group" "this" {
+resource "aws_security_group" "default" {
   count = var.create_default_security_group ? 1 : 0
   
   vpc_id = aws_vpc.this.id
-
   name = "${local.resource_prefix_region}-default-sg"
   description = "Default security group for VPC"
 
   tags = merge(
     {
-      Name = "${local.resource_prefix_region}-default-sg"
+      Name        = "${local.resource_prefix_region}-default-sg"
+      Environment = var.environment
+      Project     = var.project_name
+      Owner       = var.owner
     },
-    var.tags,
+    var.additional_tags,
     var.default_security_group_tags
   )
 }
@@ -63,7 +83,7 @@ resource "aws_security_group_rule" "default_ingress" {
   to_port           = 0
   protocol          = -1
   self              = true
-  security_group_id = aws_security_group.this[0].id
+  security_group_id = aws_security_group.default[0].id
 }
 
 resource "aws_security_group_rule" "default_egress" {
@@ -72,7 +92,7 @@ resource "aws_security_group_rule" "default_egress" {
   to_port           = 0
   protocol          = -1
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.this[0].id
+  security_group_id = aws_security_group.default[0].id
 }
 
 ################################################################################
@@ -91,7 +111,7 @@ resource "aws_subnet" "public" {
       Name        = "${var.vpc_name}-${local.subnet_abr[count.index]}-public-subnet"
       SubnetTier  = "public"
     },
-    var.tags,
+    var.additional_tags,
     var.public_subnet_tags
   )
 }
@@ -111,7 +131,7 @@ resource "aws_subnet" "private" {
       Name        = "${var.vpc_name}-${local.subnet_abr[count.index]}-private-subnet"
       SubnetTier  = "private"
     },
-    var.tags,
+    var.additional_tags,
     var.private_subnet_tags
   )
 }
@@ -127,8 +147,8 @@ resource "aws_internet_gateway" "this" {
     {
       Name = "${local.resource_prefix_region}-igw"
     },
-    var.tags,
-    var.igw_tags
+    var.additional_tags,
+    var.internet_gateway_tags
   )
 }
 
@@ -139,29 +159,36 @@ resource "aws_internet_gateway" "this" {
 resource "aws_eip" "nat" {
   count = var.create_nat ? local.subnet_count : 0
 
-  vpc               = true
+  domain = "VPC"
 
   tags = merge(
-    {
-      Name = "${local.resource_prefix_region-[count.index]}-eip"
+    { 
+      Name        = "${local.resource_prefix_region}-[count.index]-eip"
+      Environment = var.environment
+      Project     = var.project_name
+      Owner       = var.owner
     },
-    var.tags,
+    var.additional_tags,
     var.eip_tags
   )
+
+  depends_on = [aws_internet_gateway.this]
 }
 
 resource "aws_nat_gateway" "this" {
-  count         = var.create_nat ? local.subnet_count : 0
+  count = var.create_nat ? local.subnet_count : 0
 
-  availability_zone = local.availability_zones[count.index]
   allocation_id     = aws_eip.nat[count.index].id
   subnet_id         = aws_subnet.public[count.index].id
 
   tags = merge(
     {
-      Name = "${var.vpc_name}-${local.subnet_abr[count.index]}-nat-gw"
+      Name        = "${var.vpc_name}-${local.subnet_abr[count.index]}-nat-gw"
+      Environment = var.environment
+      Project     = var.project_name
+      Owner       = var.owner
     },
-    var.tags,
+    var.additional_tags,
     var.nat_gateway_tags
   )
 
@@ -176,7 +203,7 @@ resource "aws_route_table" "public" {
 
   tags = merge(
     { Name = "${local.resource_prefix_region}-public-rtb" },
-    var.tags,
+    var.additional_tags,
     var.public_route_table_tags
   )
 }
@@ -203,7 +230,7 @@ resource "aws_route_table" "private" {
 
   tags = merge(
     { Name = "${local.resource_prefix_region}-private-rtb" },
-    var.tags,
+    var.additional_tags,
     var.private_route_table_tags
   )
 }
