@@ -108,8 +108,11 @@ resource "aws_subnet" "public" {
 
   tags = merge(
     {
-      Name       = "${var.vpc_name}-${local.subnet_abr[count.index]}-public-subnet"
+      Name        = "${var.vpc_name}-${local.subnet_abr[count.index]}-public-subnet"
       SubnetTier = "public"
+      Environment = var.environment
+      Project     = var.project_name
+      Owner       = var.owner
     },
     var.additional_tags,
     var.public_subnet_tags
@@ -128,8 +131,11 @@ resource "aws_subnet" "private" {
 
   tags = merge(
     {
-      Name       = "${var.vpc_name}-${local.subnet_abr[count.index]}-private-subnet"
-      SubnetTier = "private"
+      Name        = "${var.vpc_name}-${local.subnet_abr[count.index]}-private-subnet"
+      SubnetTier  = "private"
+      Environment = var.environment
+      Project     = var.project_name
+      Owner       = var.owner
     },
     var.additional_tags,
     var.private_subnet_tags
@@ -145,7 +151,10 @@ resource "aws_internet_gateway" "this" {
 
   tags = merge(
     {
-      Name = "${local.resource_prefix_region}-igw"
+      Name        = "${local.resource_prefix_region}-igw"
+      Environment = var.environment
+      Project     = var.project_name
+      Owner       = var.owner
     },
     var.additional_tags,
     var.internet_gateway_tags
@@ -157,13 +166,13 @@ resource "aws_internet_gateway" "this" {
 ################################################################################
 
 resource "aws_eip" "nat" {
-  count = var.create_nat ? local.subnet_count : 0
+  count = var.create_nat_gateway ? local.subnet_count : 0
 
   domain = "VPC"
 
   tags = merge(
     {
-      Name        = "${local.resource_prefix_region}-[count.index]-eip"
+      Name        = "${local.resource_prefix_region}-${count.index}-eip"
       Environment = var.environment
       Project     = var.project_name
       Owner       = var.owner
@@ -176,7 +185,7 @@ resource "aws_eip" "nat" {
 }
 
 resource "aws_nat_gateway" "this" {
-  count = var.create_nat ? local.subnet_count : 0
+  count = var.create_nat_gateway ? local.subnet_count : 0
 
   allocation_id = aws_eip.nat[count.index].id
   subnet_id     = aws_subnet.public[count.index].id
@@ -202,7 +211,12 @@ resource "aws_route_table" "public" {
   vpc_id = aws_vpc.this.id
 
   tags = merge(
-    { Name = "${local.resource_prefix_region}-public-rtb" },
+    {
+      Name        = "${local.resource_prefix_region}-public-rtb"
+      Environment = var.environment
+      Project     = var.project_name
+      Owner       = var.owner
+    },
     var.additional_tags,
     var.public_route_table_tags
   )
@@ -226,33 +240,33 @@ resource "aws_route_table_association" "public" {
 }
 
 resource "aws_route_table" "private" {
+  count = local.subnet_count
+
   vpc_id = aws_vpc.this.id
 
   tags = merge(
-    { Name = "${local.resource_prefix_region}-private-rtb" },
+    {
+      Name        = "${local.resource_prefix_region}-${local.subnet_abr[count.index]}-private-rtb"
+      Environment = var.environment
+      Project     = var.project_name
+      Owner       = var.owner
+    },
     var.additional_tags,
     var.private_route_table_tags
   )
 }
 
 resource "aws_route" "nat" {
-  count                  = var.create_nat ? 1 : 0
-  route_table_id         = aws_route_table.private.id
-  destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = aws_nat_gateway.this[0].id
-}
+  count = var.create_nat_gateway ? local.subnet_count : 0
 
-resource "aws_route" "nat" {
-  for_each = aws_nat_gateway.this
-
-  route_table_id         = aws_route_table.private.id
+  route_table_id         = aws_route_table.private[count.index].id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = each.value.id
+  nat_gateway_id         = aws_nat_gateway.this[count.index].id
 }
 
 resource "aws_route_table_association" "private" {
-  for_each = aws_subnet.private
+  count = local.subnet_count
 
-  subnet_id      = each.value.id
-  route_table_id = aws_route_table.private.id
+  subnet_id      = aws_subnet.private[count.index].id
+  route_table_id = aws_route_table.private[count.index].id
 }

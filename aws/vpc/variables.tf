@@ -68,7 +68,7 @@ variable "map_public_ip_on_launch" {
   default     = true
 }
 
-variable "create_nat" {
+variable "create_nat_gateway" {
   description = "Determine if a NAT gateway is to be created"
   type        = bool
   default     = false
