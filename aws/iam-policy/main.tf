@@ -23,7 +23,7 @@ resource "aws_iam_role_policy_attachment" "this" {
   policy_arn = aws_iam_policy.this.arn
 }
 
-  data "aws_iam_policy_document" "policy" {
+data "aws_iam_policy_document" "policy" {
   statement {
     actions   = var.actions
     resources = var.resources

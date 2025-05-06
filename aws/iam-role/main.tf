@@ -3,7 +3,7 @@ locals {
 }
 
 resource "aws_iam_role" "this" {
-  name = local.iam_role_name
+  name               = local.iam_role_name
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 
   tags = merge(
@@ -22,7 +22,7 @@ data "aws_iam_policy_document" "assume_role_policy" {
     actions = ["sts.AssumeRole"]
 
     principals {
-      type = "Service"
+      type        = "Service"
       identifiers = var.assume_role_principals
     }
   }

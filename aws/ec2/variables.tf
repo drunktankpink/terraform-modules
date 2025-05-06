@@ -1,55 +1,55 @@
-variable service_name {
+variable "service_name" {
   description = "Name of the service the resource belongs to"
   type        = string
 }
 
-variable description {
+variable "description" {
   description = "Descriptor for resources"
   type        = string
 }
 
-variable environment {
+variable "environment" {
   description = "Deployment environment (e.g., dev, prod)"
   type        = string
 }
 
-variable instance_type {
+variable "instance_type" {
   description = "The instance type"
-  type = string
-  default = "t2.micro"
+  type        = string
+  default     = "t2.micro"
 }
 
-variable instance_count {
+variable "instance_count" {
   description = "The number of desired instances"
-  type = number
-  default = 1
+  type        = number
+  default     = 1
 }
 
-variable root_volume_size {
+variable "root_volume_size" {
   description = "Root volume size"
-  type = number
-  default = 8
+  type        = number
+  default     = 8
 }
 
-variable key_pair {
+variable "key_pair" {
   description = "Name of the key pair to use for SSH or RDP"
   type        = string
 }
 
-variable backup_enabled {
+variable "backup_enabled" {
   description = "AWS Backup enabled or disabled"
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 # AMI search
-variable operating_system {
+variable "operating_system" {
   description = "The operating system to use (windows, amazon-linux, ubuntu, etc.)"
   type        = string
   default     = "amazon-linux"
 }
 
-variable ami_os_map_regex {
+variable "ami_os_map_regex" {
   description = "Map of regex to search amis"
   type        = map(string)
   default = {
@@ -62,9 +62,9 @@ variable ami_os_map_regex {
   }
 }
 
-variable ami_is_map_owners {
+variable "ami_is_map_owners" {
   description = "Map of ami owners to filter only official amis"
-  type = map(list)
+  type        = map(list)
   default = {
     amazon-linux = ["137112412989"],
     ubuntu       = ["099720109477"],
@@ -75,7 +75,7 @@ variable ami_is_map_owners {
   }
 }
 
-variable tags {
+variable "tags" {
   description = "Additional tags to apply to resources"
   type        = map(string)
   default     = {}

@@ -6,7 +6,7 @@ variable "zone_id" {
 
 variable "records" {
   description = "A map of DNS records to create, each containing name, type, ttl, and values"
-  type        = map(object({
+  type = map(object({
     name                   = string
     type                   = string
     ttl                    = number
@@ -15,5 +15,5 @@ variable "records" {
     alias_zone_id          = string
     evaluate_target_health = bool
   }))
-  default     = {}
+  default = {}
 }

@@ -2,7 +2,7 @@ resource "aws_flow_log" "this" {
   count = var.create_vpc_flow_logs ? 1 : 0
 
   vpc_id = aws_vpc.this.id
-  
+
   log_destination_type = var.flow_logs_destination_type
   log_destination      = var.flow_logs_destination_type == "s3" ? module.vpc_flow_logs_s3_bucket[0].s3_bucket_arn : aws_cloudwatch_log_group.flow_logs[0].arn
   traffic_type         = var.flow_logs_traffic_type

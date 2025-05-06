@@ -27,12 +27,12 @@ resource "aws_dynamodb_table" "this" {
   dynamic "global_secondary_index" {
     for_each = var.global_secondary_indexes
     content {
-      name               = global_secondary_index.value.name
-      hash_key           = global_secondary_index.value.hash_key
-      range_key          = global_secondary_index.value.range_key
-      read_capacity      = global_secondary_index.value.read_capacity
-      write_capacity     = global_secondary_index.value.write_capacity
-      projection_type    = global_secondary_index.value.projection_type
+      name            = global_secondary_index.value.name
+      hash_key        = global_secondary_index.value.hash_key
+      range_key       = global_secondary_index.value.range_key
+      read_capacity   = global_secondary_index.value.read_capacity
+      write_capacity  = global_secondary_index.value.write_capacity
+      projection_type = global_secondary_index.value.projection_type
 
       dynamic "non_key_attributes" {
         for_each = global_secondary_index.value.non_key_attributes
@@ -61,10 +61,10 @@ resource "aws_dynamodb_table" "this" {
   }
 
   # Optional features
-  stream_enabled      = var.stream_enabled
-  stream_view_type    = var.stream_view_type
+  stream_enabled   = var.stream_enabled
+  stream_view_type = var.stream_view_type
   ttl {
-    enabled = var.ttl_enabled
+    enabled        = var.ttl_enabled
     attribute_name = var.ttl_attribute_name
   }
 

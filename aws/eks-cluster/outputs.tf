@@ -1,7 +1,7 @@
-output vpc_id {
+output "vpc_id" {
   value = data.aws_vpc.vpc.id
 }
 
-output subnet_ids {
+output "subnet_ids" {
   value = data.aws_subnet.private.*.cidr_block
 }

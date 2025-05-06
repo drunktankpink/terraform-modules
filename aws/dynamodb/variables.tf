@@ -1,56 +1,56 @@
 
-variable service_name {
+variable "service_name" {
   description = "Name of the service the resource belongs to"
   type        = string
 }
 
-variable environment {
+variable "environment" {
   description = "Deployment environment (e.g., dev, prod)"
   type        = string
 }
 
-variable hash_key {
+variable "hash_key" {
   description = "The hash (partition) key for the DynamoDB table"
   type        = string
 }
 
-variable hash_key_type {
+variable "hash_key_type" {
   description = "The type of the hash key (S for string, N for number, B for binary)"
   type        = string
   default     = "S"
 }
 
-variable range_key {
+variable "range_key" {
   description = "The range (sort) key for the DynamoDB table"
   type        = string
   default     = ""
 }
 
-variable range_key_type {
+variable "range_key_type" {
   description = "The type of the range key (S for string, N for number, B for binary)"
   type        = string
   default     = "S"
 }
 
-variable billing_mode {
+variable "billing_mode" {
   description = "The billing mode for DynamoDB (PROVISIONED or PAY_PER_REQUEST)"
   type        = string
   default     = "PAY_PER_REQUEST"
 }
 
-variable read_capacity {
+variable "read_capacity" {
   description = "Read capacity for provisioned mode"
   type        = number
   default     = 5
 }
 
-variable write_capacity {
+variable "write_capacity" {
   description = "Write capacity for provisioned mode"
   type        = number
   default     = 5
 }
 
-variable global_secondary_indexes {
+variable "global_secondary_indexes" {
   description = "Map of global secondary indexes"
   type = list(object({
     name               = string
@@ -64,7 +64,7 @@ variable global_secondary_indexes {
   default = []
 }
 
-variable local_secondary_indexes {
+variable "local_secondary_indexes" {
   description = "Map of local secondary indexes"
   type = list(object({
     name               = string
@@ -75,49 +75,49 @@ variable local_secondary_indexes {
   default = []
 }
 
-variable stream_enabled {
+variable "stream_enabled" {
   description = "Enable DynamoDB streams"
   type        = bool
   default     = false
 }
 
-variable stream_view_type {
+variable "stream_view_type" {
   description = "The view type for DynamoDB streams"
   type        = string
   default     = "NEW_AND_OLD_IMAGES"
 }
 
-variable ttl_enabled {
+variable "ttl_enabled" {
   description = "Enable TTL (time to live) on the table"
   type        = bool
   default     = false
 }
 
-variable ttl_attribute_name {
+variable "ttl_attribute_name" {
   description = "The attribute name used for TTL"
   type        = string
   default     = ""
 }
 
-variable sse_enabled {
+variable "sse_enabled" {
   description = "Enable server-side encryption"
   type        = bool
   default     = true
 }
 
-variable kms_key_arn {
+variable "kms_key_arn" {
   description = "The KMS key ARN to use for encryption"
   type        = string
   default     = ""
 }
 
-variable pitr_enabled {
+variable "pitr_enabled" {
   description = "Enable point-in-time recovery"
   type        = bool
   default     = true
 }
 
-variable tags {
+variable "tags" {
   description = "Additional tags to apply to resources"
   type        = map(string)
   default     = {}

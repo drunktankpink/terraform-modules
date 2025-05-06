@@ -1,14 +1,14 @@
 locals {
-  bucket_name        = "${var.project_name}-${var.environment}-${var.description}-bucket"
+  bucket_name = "${var.project_name}-${var.environment}-${var.description}-bucket"
 }
 
 module "s3-bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "3.0.1"
-  
-  bucket      = local.bucket_name
-  acl         = var.access_level
-  versioning  = {
+
+  bucket = local.bucket_name
+  acl    = var.access_level
+  versioning = {
     enabled = var.versioning_enabled
   }
 

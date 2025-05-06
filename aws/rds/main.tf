@@ -7,7 +7,7 @@ resource "aws_db_instance" "this" {
   storage_type         = var.storage_type
   engine               = var.engine
   instance_class       = var.instance_class
-  db_name                 = var.db_name
+  db_name              = var.db_name
   username             = var.db_username
   password             = var.db_password
   parameter_group_name = var.parameter_group_name
@@ -26,7 +26,7 @@ resource "aws_db_instance" "this" {
   kms_key_id        = var.kms_key_id
 
   # Performance Insights
-  performance_insights_enabled = var.performance_insights_enabled
+  performance_insights_enabled    = var.performance_insights_enabled
   performance_insights_kms_key_id = var.performance_insights_kms_key_id
 
   tags = merge({

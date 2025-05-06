@@ -31,7 +31,7 @@ module "random_string" {
 
   length = 23
   special = false
-  min_upper = 23  
+  min_upper = 23
 }
 ```
 
@@ -42,7 +42,7 @@ module "random_string" {
 
   length = 16
   special = true
-  override_special = "/@£$"  
+  override_special = "/@£$"
 }
 ```
 

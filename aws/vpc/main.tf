@@ -1,7 +1,7 @@
 ################################################################################
 # Data
 ################################################################################
-data "aws_region" "current" { }
+data "aws_region" "current" {}
 
 data "aws_availability_zones" "available" {
   state = "available"
@@ -12,14 +12,14 @@ data "aws_availability_zones" "available" {
 # Locals
 ################################################################################
 locals {
-  availability_zones     = data.aws_availability_zones.available.names
-  subnet_count           = length(local.availability_zones)
+  availability_zones = data.aws_availability_zones.available.names
+  subnet_count       = length(local.availability_zones)
 
   # e.g., "eu-west-1" -> "euw1"
   location_abr = join("", [
-    split("-", data.aws_region.current.name)[0],           # "eu"
+    split("-", data.aws_region.current.name)[0],               # "eu"
     substr(split("-", data.aws_region.current.name)[1], 0, 1), # "w"
-    split("-", data.aws_region.current.name)[2]            # "1"
+    split("-", data.aws_region.current.name)[2]                # "1"
   ])
 
   # e.g., "eu-west-1a" -> "euw1a"
@@ -38,10 +38,10 @@ locals {
 # VPC
 ################################################################################
 resource "aws_vpc" "this" {
-  cidr_block            = var.vpc_cidr_block
-  instance_tenancy      = var.instance_tenancy
-  enable_dns_hostnames  = var.enable_dns_hostnames
-  enable_dns_support    = var.enable_dns_support
+  cidr_block           = var.vpc_cidr_block
+  instance_tenancy     = var.instance_tenancy
+  enable_dns_hostnames = var.enable_dns_hostnames
+  enable_dns_support   = var.enable_dns_support
 
   tags = merge(
     {
@@ -60,9 +60,9 @@ resource "aws_vpc" "this" {
 ################################################################################
 resource "aws_security_group" "default" {
   count = var.create_default_security_group ? 1 : 0
-  
-  vpc_id = aws_vpc.this.id
-  name = "${local.resource_prefix_region}-default-sg"
+
+  vpc_id      = aws_vpc.this.id
+  name        = "${local.resource_prefix_region}-default-sg"
   description = "Default security group for VPC"
 
   tags = merge(
@@ -99,7 +99,7 @@ resource "aws_security_group_rule" "default_egress" {
 # Public Subnets
 ################################################################################
 resource "aws_subnet" "public" {
-  count                   = local.subnet_count
+  count = local.subnet_count
 
   vpc_id                  = aws_vpc.this.id
   cidr_block              = cidrsubnet(var.vpc_cidr_block, var.subnet_netbits, count.index)
@@ -108,8 +108,8 @@ resource "aws_subnet" "public" {
 
   tags = merge(
     {
-      Name        = "${var.vpc_name}-${local.subnet_abr[count.index]}-public-subnet"
-      SubnetTier  = "public"
+      Name       = "${var.vpc_name}-${local.subnet_abr[count.index]}-public-subnet"
+      SubnetTier = "public"
     },
     var.additional_tags,
     var.public_subnet_tags
@@ -120,16 +120,16 @@ resource "aws_subnet" "public" {
 # Private Subnets
 ################################################################################
 resource "aws_subnet" "private" {
-  count                   = local.subnet_count
+  count = local.subnet_count
 
-  vpc_id                  = aws_vpc.this.id
-  cidr_block              = cidrsubnet(var.vpc_cidr_block, var.subnet_netbits, count.index + local.subnet_count)
-  availability_zone       = local.availability_zones[count.index]
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = cidrsubnet(var.vpc_cidr_block, var.subnet_netbits, count.index + local.subnet_count)
+  availability_zone = local.availability_zones[count.index]
 
   tags = merge(
     {
-      Name        = "${var.vpc_name}-${local.subnet_abr[count.index]}-private-subnet"
-      SubnetTier  = "private"
+      Name       = "${var.vpc_name}-${local.subnet_abr[count.index]}-private-subnet"
+      SubnetTier = "private"
     },
     var.additional_tags,
     var.private_subnet_tags
@@ -140,7 +140,7 @@ resource "aws_subnet" "private" {
 # Internet gateway
 ################################################################################
 resource "aws_internet_gateway" "this" {
-  count = var.create_internet_gateway ? 1 : 0
+  count  = var.create_internet_gateway ? 1 : 0
   vpc_id = aws_vpc.this.id
 
   tags = merge(
@@ -162,7 +162,7 @@ resource "aws_eip" "nat" {
   domain = "VPC"
 
   tags = merge(
-    { 
+    {
       Name        = "${local.resource_prefix_region}-[count.index]-eip"
       Environment = var.environment
       Project     = var.project_name
@@ -178,8 +178,8 @@ resource "aws_eip" "nat" {
 resource "aws_nat_gateway" "this" {
   count = var.create_nat ? local.subnet_count : 0
 
-  allocation_id     = aws_eip.nat[count.index].id
-  subnet_id         = aws_subnet.public[count.index].id
+  allocation_id = aws_eip.nat[count.index].id
+  subnet_id     = aws_subnet.public[count.index].id
 
   tags = merge(
     {
@@ -209,9 +209,9 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route" "internet" {
-  route_table_id          = aws_route_table.public.id
-  destination_cidr_block  = "0.0.0.0/0"
-  gateway_id              = aws_internet_gateway.this.id
+  route_table_id         = aws_route_table.public.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.this.id
 
   timeouts {
     create = "5m"
@@ -219,10 +219,10 @@ resource "aws_route" "internet" {
 }
 
 resource "aws_route_table_association" "public" {
-  for_each        = aws_subnet.public
+  for_each = aws_subnet.public
 
-  subnet_id       = each.value.id
-  route_table_id  = aws_route_table.public.id
+  subnet_id      = each.value.id
+  route_table_id = aws_route_table.public.id
 }
 
 resource "aws_route_table" "private" {
@@ -236,23 +236,23 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route" "nat" {
-  count                   = var.create_nat ? 1 : 0
-  route_table_id          = aws_route_table.private.id
-  destination_cidr_block  = "0.0.0.0/0"
-  nat_gateway_id          = aws_nat_gateway.this[0].id
+  count                  = var.create_nat ? 1 : 0
+  route_table_id         = aws_route_table.private.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.this[0].id
 }
 
 resource "aws_route" "nat" {
   for_each = aws_nat_gateway.this
 
-  route_table_id          = aws_route_table.private.id
-  destination_cidr_block  = "0.0.0.0/0"
-  nat_gateway_id          = each.value.id
+  route_table_id         = aws_route_table.private.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = each.value.id
 }
 
 resource "aws_route_table_association" "private" {
-  for_each        = aws_subnet.private
+  for_each = aws_subnet.private
 
-  subnet_id       = each.value.id
-  route_table_id  = aws_route_table.private.id
+  subnet_id      = each.value.id
+  route_table_id = aws_route_table.private.id
 }

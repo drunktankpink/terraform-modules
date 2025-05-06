@@ -12,7 +12,7 @@ module "vpc" {
   private_subnets = var.private_subnets
 
   enable_nat_gateway = var.enable_nat_gateway
-  tags = var.tags
+  tags               = var.tags
 }
 
 resource "aws_eks_cluster" "this" {
@@ -21,8 +21,8 @@ resource "aws_eks_cluster" "this" {
   version  = var.kubernetes_version
 
   vpc_config {
-    subnet_ids = module.vpc.private_subnets
-    endpoint_public_access = var.endpoint_public_access
+    subnet_ids              = module.vpc.private_subnets
+    endpoint_public_access  = var.endpoint_public_access
     endpoint_private_access = var.endpoint_private_access
   }
 

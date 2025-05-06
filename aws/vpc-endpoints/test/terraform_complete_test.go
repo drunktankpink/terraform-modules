@@ -18,7 +18,7 @@ func TestExampleSimpleEndpoint(t *testing.T) {
 			"application_name": "sno",
 			"allocation_id": "APP_12345",
 			"cost_centre": "cc12345",
-			"project_code": "12345-1234"			
+			"project_code": "12345-1234"
 		}
 	}
 }
