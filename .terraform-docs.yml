@@ -1,8 +1,8 @@
-
 formatter: markdown
 header-from: main.tf
 output-file: README.md
 output-mode: inject
+
 sections:
   - header
   - providers
@@ -10,9 +10,12 @@ sections:
   - outputs
   - resources
   - footer
+
 sort:
   enabled: true
   by: name
+
 settings:
   indent: 2
   escape: false
+  required: true
