@@ -1,9 +1,9 @@
 variable environment {
-  description = "Environment the resource belongs to (e.g., dev, stage, prod)"
+  description = "Environment the resource belongs to (e.g., dev, test, prod)"
   type        = string
   validation {
-    condition     = contains(["dev", "stage", "prod"], var.environment)
-    error_message = "environment must be one of: dev, stage, prod"
+    condition     = contains(["dev", "test", "prod"], var.environment)
+    error_message = "environment must be one of: dev, test, prod"
   }
 }
 
