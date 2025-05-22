@@ -1,10 +1,9 @@
 module "private_zone_single" {
-  source     = "./modules/route53-private-zone"
-  zone_names = ["dev.internal.company.com"]
-  vpc_ids    = ["vpc-12345678"]
-  tags = {
-    Environment = "dev"
-    Project     = "Core Platform"
-    Owner       = "Network Team"
-  }
+    source        = "../"
+
+    zone_names    = ["dev.internal.company.com"]
+    vpc_ids       = ["vpc-12345678"]
+    environment   = "dev"
+    project_name  = "Core Platform"
+    owner         = "Network Team"
 }

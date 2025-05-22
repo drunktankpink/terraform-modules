@@ -1,10 +1,9 @@
 module "public_hosted_zone" {
-  source     = "./modules/route53-zone"
-  zone_name  = "example.com"
-  subdomains = ["dev", "staging", "test"]
-  tags = {
-    Environment = "dev"
-    Project     = "Core Platform"
-    Owner       = "Network Team"
-  }
+    source     = "../"
+
+    zone_name     = "example.com"
+    subdomains    = ["dev", "staging", "test"]
+    environment   = "dev"
+    project_name  = "Core Platform"
+    owner         = "Network Team"
 }
