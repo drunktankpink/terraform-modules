@@ -1,13 +1,12 @@
-
 variable "zone_name" {
-  description = "The name of the Route 53 hosted zone"
+  description = "The primary domain name (e.g., example.com)"
   type        = string
 }
 
-variable "vpc_id" {
-  description = "The VPC ID for private zones (if applicable)"
-  type        = string
-  default     = null
+variable "subdomains" {
+  description = "List of subdomains to create and delegate"
+  type        = list(string)
+  default     = []
 }
 
 variable "environment" {
