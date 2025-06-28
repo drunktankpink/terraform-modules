@@ -32,6 +32,29 @@ locals {
   ]
 
   resource_prefix_region = "${var.vpc_name}-${local.location_abr}"
+
+  # EKS tags generation
+  eks_cluster_tags = var.enable_eks_tags ? {
+    for cluster in var.eks_cluster_names : 
+    "kubernetes.io/cluster/${cluster}" => var.eks_ownership
+  } : {}
+
+  # Public subnet tags (for load balancers)
+  public_subnet_eks_tags = var.enable_eks_tags ? merge(
+    local.eks_cluster_tags,
+    {
+      "kubernetes.io/role/elb" = "1"
+    }
+  ) : {}
+
+  # Private subnet tags (for worker nodes)
+  private_subnet_eks_tags = var.enable_eks_tags ? merge(
+    local.eks_cluster_tags,
+    {
+      "kubernetes.io/role/internal-elb" = "1"
+    }
+  ) : {}
+
 }
 
 ################################################################################
