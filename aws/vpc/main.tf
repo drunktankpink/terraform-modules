@@ -138,7 +138,8 @@ resource "aws_subnet" "public" {
       Owner       = var.owner
     },
     var.additional_tags,
-    var.public_subnet_tags
+    var.public_subnet_tags,
+    local.public_subnet_eks_tags
   )
 }
 
@@ -161,7 +162,8 @@ resource "aws_subnet" "private" {
       Owner       = var.owner
     },
     var.additional_tags,
-    var.private_subnet_tags
+    var.private_subnet_tags,
+    local.private_subnet_eks_tags
   )
 }
 
