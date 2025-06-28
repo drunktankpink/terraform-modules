@@ -187,3 +187,32 @@ variable "vpc_flow_logs_tags" {
   type        = map(string)
   default     = {}
 }
+
+# EKS Integration Variables
+variable "enable_eks_tags" {
+  description = "Enable EKS-specific subnet tagging for Kubernetes integration"
+  type        = bool
+  default     = false
+}
+
+variable "eks_cluster_names" {
+  description = "List of EKS cluster names for subnet tagging (required if enable_eks_tags is true)"
+  type        = list(string)
+  default     = []
+  
+  validation {
+    condition = var.enable_eks_tags == false || length(var.eks_cluster_names) > 0
+    error_message = "eks_cluster_names must be provided when enable_eks_tags is true."
+  }
+}
+
+variable "eks_ownership" {
+  description = "EKS cluster ownership type for subnets"
+  type        = string
+  default     = "shared"
+  
+  validation {
+    condition = contains(["shared", "owned"], var.eks_ownership)
+    error_message = "eks_ownership must be either 'shared' or 'owned'."
+  }
+}
